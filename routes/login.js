@@ -1,5 +1,9 @@
 const { Router } = require("express");
 const router = Router();
+var jwt = require('jsonwebtoken');
+
+const validators = require("./../validators/loginValidators");
+const LoginController = require('./../controllers/loginController');
 
 router.get("/", (req, res) => {
   try {
@@ -9,17 +13,10 @@ router.get("/", (req, res) => {
   }
 });
 
-router.post("/", (req, res) => {
-  try {    
-    const { username, password } = req.body;
-    if (username.toLowerCase() === "hovok" && password === "Admin123*") {
-      res.send({ message: "hello from login route" });
-    } else {
-      res.status(422).send({ message: "Invalid data" });
-    }
-  } catch (err) {
-    console.log(err);
-  }
-});
+router.post("/", validators, LoginController.login);
+
+function generateJwtToken(object){
+  return jwt.sign({...object}, process.env.JWT_TOKEN_KEY, { expiresIn: '1h' });
+}
 
 module.exports = router;
