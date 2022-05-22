@@ -1,13 +1,14 @@
 const bcrypt = require("bcrypt");
 const { validationResult } = require("express-validator");
-const roles = require("../models/roles");
 const User = require("./../models/user");
-const Roles = require("./../models/roles");
+const tokenService = require("./../services/tokenService");
+const helperService = require("./../services/helperService");
+const loginService = require("./../services/loginService");
 
 class LoginController {
   constructor() {
-    this.login = (req, res) => {
-      try {        
+    this.login = async (req, res) => {
+      try {
         this.req = req;
         this.res = res;
         const errors = validationResult(req);
@@ -15,30 +16,19 @@ class LoginController {
           res.status(422).send(errors);
         } else {
           const { email, password } = req.body;          
-          this.checkData(email, password);
+          await loginService
+            .checkData(email, password)
+            .then((data) => {
+              res.cookie('refresh_token', data.refresh_token, {maxAge: 30*24*60*60*1000, httpOnly:true})
+              res.send(data);
+            })
+            .catch((err) => {
+              console.log(err);
+              res.status(422).send({errors: err})
+            });
         }
-      } catch (err) {
-        console.log(err);
+      } catch (err) {        
         res.status(422).send(err);
-      }
-    };
-
-
-    this.checkData = async (email, password) => {
-      const user = await User.findOne({ where: { email } });
-      if(user){        
-          let password_is_true = await bcrypt.compare(password, user.password);
-          if(password_is_true){
-            this.res.send({name: password_is_true, p: user.password});
-          }
-          else{
-            let error = [{param: 'email', msg: 'Email or password is invalid'}];
-            this.res.status(422).send({errors: error});
-          }          
-      }
-      else{
-          let error = [{param: 'email', msg: 'Email or password is invalid'}];
-          this.res.status(422).send({errors: error});
       }
     };
   }

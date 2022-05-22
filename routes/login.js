@@ -15,8 +15,4 @@ router.get("/", (req, res) => {
 
 router.post("/", validators, LoginController.login);
 
-function generateJwtToken(object){
-  return jwt.sign({...object}, process.env.JWT_TOKEN_KEY, { expiresIn: '1h' });
-}
-
 module.exports = router;

@@ -3,10 +3,12 @@ const express = require("express");
 const sequelize = require('./utils/database');
 const app = express();
 const body_parser = require("body-parser");
+const cookie_parser = require('cookie-parser');
 const path = require("path");
 const port = process.env.port || 3000;
 const routes = require("./routes/index");
 
+app.use(cookie_parser());
 // parse application/x-www-form-urlencoded
 app.use(body_parser.urlencoded({ extended: false }));
 // parse application/json

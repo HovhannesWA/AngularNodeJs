@@ -21,6 +21,14 @@ const user = sequelize.define('User', {
         allowNull: false,
         type: Sequelize.STRING
     },
+    email_is_confirmed: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false
+    },
+    email_confirm_token: {
+        type: Sequelize.STRING,
+        allowNull: true
+    },
     password: {        
         allowNull: false,
         type: Sequelize.STRING
