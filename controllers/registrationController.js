@@ -23,7 +23,7 @@ const RegistrationController = {
         const {refresh_token} = tokenService.generateToken(helperService.userDPO(new_user));
         await tokenService.saveToken(new_user.id,refresh_token);
 
-        mailService.sendEmailConfirmToken(new_user.email, refresh_token);
+        // mailService.sendEmailConfirmToken(new_user.email, refresh_token);
 
         res.status(200).send({user: new_user, refresh_token: refresh_token});
       }

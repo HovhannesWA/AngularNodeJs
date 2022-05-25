@@ -31,7 +31,17 @@ class LoginController {
         res.status(422).send(err);
       }
     };
+
+    this.logout = (req, res) => {
+      const {refresh_token} = req.cookies;
+      res.clearCookie('refresh_token');
+      const deleted_token = tokenService.removeRefreshToken(refresh_token);
+      res.status(200).send({data: deleted_token})
+    }
   }
+
+  // static login(){console.log(888);}
+  // static logout(){console.log(888);}
 }
 
 const login_controler = new LoginController();
